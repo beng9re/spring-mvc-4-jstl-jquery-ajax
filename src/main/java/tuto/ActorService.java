@@ -5,7 +5,11 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static tuto.ActorModel.convert;
+
 
 @Service
 public class ActorService {
@@ -13,12 +17,17 @@ public class ActorService {
     @Autowired
     private ActorRepository actorRepository;
 
-    public Actor findById(Long actorId) {
-        return actorRepository.findById(actorId).orElse(new Actor());
+    public ActorModel findById(Long actorId) {
+        final Actor findActor = actorRepository.findById(actorId).orElse(Actor.emptyActor());
+
+        return convert(findActor);
     }
 
-    public List<Actor> findByAll() {
-        return actorRepository.findAll();
+    public List<ActorModel> findByAll() {
+        return actorRepository.findAll()
+                .stream()
+                .map(ActorModel::convert)
+                .collect(Collectors.toList());
     }
 
     @PostConstruct
